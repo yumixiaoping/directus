@@ -6,7 +6,7 @@ import { InvalidCredentialsException } from '../exceptions';
 import { DirectusTokenPayload } from '../types';
 import isDirectusJWT from '../utils/is-directus-jwt';
 
-export async function getAccountabilityForToken(token?: string | null): Accountability {
+export async function getAccountabilityForToken(token?: string | null): Promise<Accountability> {
 	const database = getDatabase();
 
 	const accountability: Accountability = {

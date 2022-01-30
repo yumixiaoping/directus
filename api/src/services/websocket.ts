@@ -1,6 +1,5 @@
 import http from 'http';
 import WebSocket, { WebSocketServer } from 'ws';
-import env from '../env';
 import logger from '../logger';
 import { parse } from 'url';
 import { GraphQLService } from './graphql';
@@ -15,11 +14,6 @@ export class WebSocketService {
 	constructor(httpServer: http.Server) {
 		this.server = new WebSocketServer({ noServer: true });
 		this.graphqlServer = new WebSocketServer({ noServer: true });
-
-		this.server.on('listening', () => {
-			const port = env.PORT;
-			logger.info(`WebSocket server started at ws://localhost:${port}`);
-		});
 
 		httpServer.on('upgrade', (request, socket, head) => {
 			const { pathname } = parse(request.url!);
@@ -38,7 +32,7 @@ export class WebSocketService {
 		useGraphQLServer(
 			{
 				schema: async (ctx) => {
-					const accountability = getAccountabilityForToken(ctx.connectionParams?.token as string | undefined);
+					const accountability = await getAccountabilityForToken(ctx.connectionParams?.token as string | undefined);
 
 					const service = new GraphQLService({
 						schema: await getSchema(),
