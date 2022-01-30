@@ -506,7 +506,7 @@ export class GraphQLService {
 
 									path = path.reverse().slice(0, -1);
 
-									let parent = context.data;
+									let parent = context?.data;
 
 									for (const pathPart of path) {
 										parent = parent[pathPart];
@@ -886,7 +886,7 @@ export class GraphQLService {
 						: [ReadCollectionTypes[collection.collection]],
 					resolve: async ({ info, context }: { info: GraphQLResolveInfo; context: Record<string, any> }) => {
 						const result = await self.resolveQuery(info);
-						context.data = result;
+						// context.data = result;
 						return result;
 					},
 				});
@@ -909,7 +909,7 @@ export class GraphQLService {
 					},
 					resolve: async ({ info, context }: { info: GraphQLResolveInfo; context: Record<string, any> }) => {
 						const result = await self.resolveQuery(info);
-						context.data = result;
+						// context.data = result;
 
 						return result;
 					},
@@ -924,7 +924,7 @@ export class GraphQLService {
 						},
 						resolve: async ({ info, context }: { info: GraphQLResolveInfo; context: Record<string, any> }) => {
 							const result = await self.resolveQuery(info);
-							context.data = result;
+							// context.data = result;
 							return result;
 						},
 					});
