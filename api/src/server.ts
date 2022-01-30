@@ -12,6 +12,7 @@ import logger from './logger';
 import emitter from './emitter';
 import checkForUpdate from 'update-check';
 import pkg from '../package.json';
+import { WebSocketService } from './services/websocket';
 
 export async function createServer(): Promise<http.Server> {
 	const server = http.createServer(await createApp());
@@ -78,6 +79,12 @@ export async function createServer(): Promise<http.Server> {
 		res.once('close', complete.bind(null, false));
 	});
 
+	let websocketService: WebSocketService;
+
+	if (env.WEBSOCKETS_ENABLED === true) {
+		websocketService = new WebSocketService(server);
+	}
+
 	const terminusOptions: TerminusOptions = {
 		timeout: 1000,
 		signals: ['SIGINT', 'SIGTERM', 'SIGHUP'],
@@ -97,6 +104,8 @@ export async function createServer(): Promise<http.Server> {
 	}
 
 	async function onSignal() {
+		websocketService?.terminate();
+
 		const database = getDatabase();
 		await database.destroy();
 

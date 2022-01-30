@@ -77,6 +77,8 @@ const defaults: Record<string, any> = {
 	IP_CUSTOM_HEADER: false,
 
 	SERVE_APP: true,
+
+	WEBSOCKETS_ENABLED: true,
 };
 
 // Allows us to force certain environment variable into a type, instead of relying
@@ -91,6 +93,8 @@ const typeMap: Record<string, string> = {
 	DB_PORT: 'number',
 
 	DB_EXCLUDE_TABLES: 'array',
+
+	WEBSOCKETS_ENABLED: 'boolean',
 };
 
 let env: Record<string, any> = {
