@@ -1,0 +1,32 @@
+html,
+body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	display: flex;
+}
+
+body > * {
+	flex-basis: 50%;
+}
+
+#messages {
+	font-family: monospace;
+	white-space: pre;
+	background-color: #efefef;
+	padding: 12px;
+}
+
+#send {
+	padding: 12px;
+}
+
+textarea {
+	display: block;
+	margin-bottom: 8px;
+	width: 100%;
+	height: 100px;
+}
