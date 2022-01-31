@@ -81,6 +81,33 @@ import { WebhooksService } from './webhooks';
 import { generateHash } from '../utils/generate-hash';
 import { DEFAULT_AUTH_PROVIDER } from '../constants';
 
+// DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DE
+// =================================================================================================
+import { EventEmitter, on } from 'events';
+import emitter from '../emitter';
+
+export const createPubSub = <TTopicPayload extends { [key: string]: unknown }>(emitter: EventEmitter) => {
+	return {
+		publish: <TTopic extends Extract<keyof TTopicPayload, string>>(topic: TTopic, payload: TTopicPayload[TTopic]) =>
+			void emitter.emit(topic as string, payload),
+		subscribe: async function* <TTopic extends Extract<keyof TTopicPayload, string>>(
+			topic: TTopic
+		): AsyncIterableIterator<TTopicPayload[TTopic]> {
+			const asyncIterator = on(emitter, topic);
+			for await (const [value] of asyncIterator) {
+				yield value;
+			}
+		},
+	};
+};
+
+const messages = createPubSub(new EventEmitter());
+
+emitter.onAction('messages.items.create', ({ payload }) => {
+	messages.publish('MESSAGE_ADDED', payload);
+});
+// =================================================================================================
+
 const GraphQLVoid = new GraphQLScalarType({
 	name: 'Void',
 
@@ -506,7 +533,7 @@ export class GraphQLService {
 
 									path = path.reverse().slice(0, -1);
 
-									let parent = context?.data;
+									let parent = context.data;
 
 									for (const pathPart of path) {
 										parent = parent[pathPart];
@@ -523,6 +550,20 @@ export class GraphQLService {
 					});
 				}
 			}
+
+			// DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEMO DEM
+			// ========================================================================================
+			schemaComposer.Subscription.addFields({
+				message: {
+					type: GraphQLJSON,
+					subscribe: async function* () {
+						for await (const payload of messages.subscribe('MESSAGE_ADDED')) {
+							yield { message: payload };
+						}
+					},
+				},
+			});
+			// ========================================================================================
 
 			return { CollectionTypes };
 		}
@@ -886,7 +927,7 @@ export class GraphQLService {
 						: [ReadCollectionTypes[collection.collection]],
 					resolve: async ({ info, context }: { info: GraphQLResolveInfo; context: Record<string, any> }) => {
 						const result = await self.resolveQuery(info);
-						// context.data = result;
+						context.data = result;
 						return result;
 					},
 				});
@@ -909,7 +950,7 @@ export class GraphQLService {
 					},
 					resolve: async ({ info, context }: { info: GraphQLResolveInfo; context: Record<string, any> }) => {
 						const result = await self.resolveQuery(info);
-						// context.data = result;
+						context.data = result;
 
 						return result;
 					},
@@ -924,7 +965,7 @@ export class GraphQLService {
 						},
 						resolve: async ({ info, context }: { info: GraphQLResolveInfo; context: Record<string, any> }) => {
 							const result = await self.resolveQuery(info);
-							// context.data = result;
+							context.data = result;
 							return result;
 						},
 					});

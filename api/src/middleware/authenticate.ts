@@ -4,7 +4,7 @@ import { getAccountabilityForToken } from '../utils/get-accountability-for-token
 import { getIPFromReq } from '../utils/get-ip-from-req';
 
 const authenticate: RequestHandler = asyncHandler(async (req, res, next) => {
-	req.accountability = getAccountabilityForToken(req.token);
+	req.accountability = await getAccountabilityForToken(req.token);
 
 	req.accountability.ip = getIPFromReq(req);
 	req.accountability.userAgent = req.get('user-agent');

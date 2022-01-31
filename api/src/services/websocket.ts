@@ -31,6 +31,7 @@ export class WebSocketService {
 
 		useGraphQLServer(
 			{
+				context: {},
 				schema: async (ctx) => {
 					const accountability = await getAccountabilityForToken(ctx.connectionParams?.token as string | undefined);
 
@@ -46,18 +47,18 @@ export class WebSocketService {
 			this.graphqlServer
 		);
 
-		this.graphqlServer.on('connection', (ws) => {
-			ws.on('message', (data) => {
-				logger.trace(`[WSS] Received: ${data}`);
-			});
-		});
-
 		this.server.on('connection', (ws) => {
 			ws.on('message', (data) => {
 				logger.trace(`[WSS] Received: ${data}`);
 			});
 
 			ws.send('something');
+		});
+
+		this.graphqlServer.on('connection', (ws) => {
+			ws.on('message', (data) => {
+				logger.trace(`[WSS GraphQL] Received: ${data}`);
+			});
 		});
 	}
 
